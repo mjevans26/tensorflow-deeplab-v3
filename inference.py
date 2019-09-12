@@ -94,7 +94,7 @@ def main(unused_argv):
     #mask = pred_dict['decoded_labels']
     classes = pred_dict['classes']
     probs = pred_dict['probabilities']
-    print(probs)
+    print(probs.shape, classes.shape)
     out = np.stack([np.squeeze(probs), np.squeeze(classes)], axis = -1)
     #mask = Image.fromarray(mask)
     plt.axis('off')
