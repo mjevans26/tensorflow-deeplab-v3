@@ -260,7 +260,7 @@ def eval_input_fn(image_filenames, bands, batch_size=1, side = 256):
     label = parsed.pop('landcover')
     label = tf.to_int32(tf.expand_dims(label, axis = -1))
     
-    image = tf.stack([parsed[x] for x in FLAGS.bands], axis = -1)
+    image = tf.stack([parsed[x] for x in bands], axis = -1)
     image = mean_image_subtraction(image)
     
     return image, label
