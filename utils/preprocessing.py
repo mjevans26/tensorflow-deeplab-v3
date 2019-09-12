@@ -8,9 +8,9 @@ _R_MEAN = 123.68
 _G_MEAN = 116.78
 _B_MEAN = 103.94
 
-S2_R_MEAN = 0
-S2_G_MEAN = 0
-S2_B_MEAN = 0
+S2_B_MEAN = 0.0995
+S2_G_MEAN = 0.0848
+S2_R_MEAN = 0.0752
 
 # colour map
 label_colours = [(0, 0, 0),  # 0=background
@@ -83,7 +83,7 @@ def mean_image_addition(image, means=(_R_MEAN, _G_MEAN, _B_MEAN)):
   return tf.concat(axis=2, values=channels)
 
 
-def mean_image_subtraction(image, means=(_R_MEAN, _G_MEAN, _B_MEAN)):
+def mean_image_subtraction(image, means=(_R_MEAN, _G_MEAN, _B_MEAN), S2 = False):
   """Subtracts the given means from each image channel.
 
   For example:
@@ -95,6 +95,7 @@ def mean_image_subtraction(image, means=(_R_MEAN, _G_MEAN, _B_MEAN)):
   Args:
     image: a tensor of size [height, width, C].
     means: a C-vector of values to subtract from each channel.
+    S2: Boolean for whether image is Sentinel-2 
 
   Returns:
     the centered image.
@@ -110,6 +111,8 @@ def mean_image_subtraction(image, means=(_R_MEAN, _G_MEAN, _B_MEAN)):
   if len(means) != num_channels:
     raise ValueError('len(means) must match the number of channels')
 
+  if S2:
+      means = [S2_R_MEAN, S2_G_MEAN, S2_B_MEAN]
   channels = tf.split(axis=2, num_or_size_splits=num_channels, value=image)
   for i in range(num_channels):
     channels[i] -= means[i]
