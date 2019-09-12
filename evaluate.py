@@ -41,7 +41,7 @@ parser.add_argument('--output_stride', type=int, default=16,
                     choices=[8, 16],
                     help='Output stride for DeepLab v3. Currently 8 or 16 is supported.')
 
-_NUM_CLASSES = 21
+_NUM_CLASSES = 2
 
 
 def main(unused_argv):
@@ -49,10 +49,12 @@ def main(unused_argv):
   os.environ['TF_ENABLE_WINOGRAD_NONFUSED'] = '1'
 
   examples = dataset_util.read_examples_list(FLAGS.evaluation_data_list)
-  image_files = [os.path.join(FLAGS.image_data_dir, filename) + '.jpg' for filename in examples]
-  label_files = [os.path.join(FLAGS.label_data_dir, filename) + '.png' for filename in examples]
+  image_files = tf.gfile.Glob('{}/*tfrecord.gz'.format(FLAGS.image_data_dir))
+  #image_files = [os.path.join(FLAGS.image_data_dir, filename) + '.jpg' for filename in examples]
+  #label_files = [os.path.join(FLAGS.label_data_dir, filename) + '.png' for filename in examples]
 
-  features, labels = preprocessing.eval_input_fn(image_files, label_files)
+  features, labels = preprocessing.eval_input_fn(image_files)
+  #features, labels = preprocessing.eval_input_fn(image_files, label_files)
 
   predictions = deeplab_model.deeplabv3_model_fn(
       features,
