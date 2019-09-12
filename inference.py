@@ -98,7 +98,7 @@ def main(unused_argv):
     out = np.concatenate([probs, classes], axis = -1)
     #mask = Image.fromarray(mask)
     plt.axis('off')
-    plt.imshow(probs, cmap='hot', interpolation='nearest', vmin = 0.9, vmax = 1)
+    plt.imshow(probs[:, :, 0], cmap='hot', interpolation='nearest', vmin = 0.9, vmax = 1)
     plt.show()
     #plt.imshow(mask)
     plt.savefig(path_to_output, bbox_inches='tight')
