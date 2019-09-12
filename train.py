@@ -80,7 +80,10 @@ parser.add_argument('--weight_decay', type=float, default=2e-4,
 parser.add_argument('--debug', action='store_true',
                     help='Whether to use debugger to track down bad values during training.')
 
-_NUM_CLASSES = 21
+parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
+                    help='Which set of 3 bands to use?')
+
+_NUM_CLASSES = 2
 _HEIGHT = 513
 _WIDTH = 513
 _DEPTH = 3
@@ -94,8 +97,8 @@ _MOMENTUM = 0.9
 _BATCH_NORM_DECAY = 0.9997
 
 _NUM_IMAGES = {
-    'train': 10582,
-    'validation': 1449,
+    'train': 198,
+    'validation': 198,
 }
 
 
@@ -109,27 +112,33 @@ def get_filenames(is_training, data_dir):
   Returns:
     A list of file names.
   """
+  files = tf.gfile.Glob('{}/*tfrecord.gz'.format(data_dir))
+  split = len(files)//20
   if is_training:
-    return [os.path.join(data_dir, 'voc_train.record')]
+    return files[0:split*4]
+    #return [os.path.join(data_dir, 'voc_train.record')]
   else:
+    return files[split*4:]
     return [os.path.join(data_dir, 'voc_val.record')]
 
 
 def parse_record(raw_record):
   """Parse PASCAL image and label from a tf record."""
   keys_to_features = {
-      'image/height':
-      tf.FixedLenFeature((), tf.int64),
-      'image/width':
-      tf.FixedLenFeature((), tf.int64),
-      'image/encoded':
-      tf.FixedLenFeature((), tf.string, default_value=''),
-      'image/format':
-      tf.FixedLenFeature((), tf.string, default_value='jpeg'),
-      'label/encoded':
-      tf.FixedLenFeature((), tf.string, default_value=''),
-      'label/format':
-      tf.FixedLenFeature((), tf.string, default_value='png'),
+      'R':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      'G':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      'B':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      'pc1':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      'pc2':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      'pc3':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      'landcover':
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32)
   }
 
   parsed = tf.parse_single_example(raw_record, keys_to_features)
@@ -137,15 +146,18 @@ def parse_record(raw_record):
   # height = tf.cast(parsed['image/height'], tf.int32)
   # width = tf.cast(parsed['image/width'], tf.int32)
 
-  image = tf.image.decode_image(
-      tf.reshape(parsed['image/encoded'], shape=[]), _DEPTH)
-  image = tf.to_float(tf.image.convert_image_dtype(image, dtype=tf.uint8))
-  image.set_shape([None, None, 3])
+  image = tf.stack([parsed[x] for x in FLAGS.bands], axis = -1)
+  #image = tf.image.decode_image(
+  #    tf.reshape(parsed['image/encoded'], shape=[]), _DEPTH)
+  #image = tf.to_float(tf.image.convert_image_dtype(image, dtype=tf.uint8))
+  #image.set_shape([_HEIGHT, WIDTH, 3])
 
-  label = tf.image.decode_image(
-      tf.reshape(parsed['label/encoded'], shape=[]), 1)
-  label = tf.to_int32(tf.image.convert_image_dtype(label, dtype=tf.uint8))
-  label.set_shape([None, None, 1])
+  label = parsed['landcover']
+  #label = tf.image.decode_image(
+  #    tf.reshape(parsed['label/encoded'], shape=[]), 1)
+  #label = tf.to_int32(tf.image.convert_image_dtype(label, dtype=tf.uint8))
+  #label.set_shape([_HEIGHT, _WIDTH, 1])
+  label = tf.to_int32(tf.expand_dims(label, axis = -1))
 
   return image, label
 
@@ -185,8 +197,9 @@ def input_fn(is_training, data_dir, batch_size, num_epochs=1):
   Returns:
     A tuple of images and labels.
   """
-  dataset = tf.data.Dataset.from_tensor_slices(get_filenames(is_training, data_dir))
-  dataset = dataset.flat_map(tf.data.TFRecordDataset)
+  #dataset = tf.data.Dataset.from_tensor_slices(get_filenames(is_training, data_dir))
+  #dataset = dataset.flat_map(tf.data.TFRecordDataset)
+  dataset = tf.data.TFRecordDataset(get_filenames(is_training, data_dir), compression_type = 'GZIP')
 
   if is_training:
     # When choosing shuffle buffer sizes, larger sizes result in better
