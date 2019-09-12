@@ -295,7 +295,7 @@ def eval_input_fn(image_filenames, batch_size=1, side = 256):
   dataset = tf.data.TFRecordDataset(input_filenames, compression_type = 'GZIP')
   #dataset = tf.data.Dataset.from_tensor_slices(input_filenames)
   #if label_filenames is None:
-  dataset = dataset.map(lambda x: _parse_function(x, False))
+  #dataset = dataset.map(lambda x: _parse_function(x, False))
   dataset = dataset.map(_parse_function)
   #else:
   #  dataset = dataset.map(lambda x, y: _parse_function((x, y), True))
