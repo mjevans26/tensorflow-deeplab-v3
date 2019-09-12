@@ -160,20 +160,20 @@ def deeplabv3_model_fn(features, labels, mode, params):
 
   pred_classes = tf.expand_dims(tf.argmax(logits, axis=3, output_type=tf.int32), axis=3)
 
-  pred_decoded_labels = tf.py_func(preprocessing.decode_labels,
-                                   [pred_classes, params['batch_size'], params['num_classes']],
-                                   tf.uint8)
+  #pred_decoded_labels = tf.py_func(preprocessing.decode_labels,
+  #                                 [pred_classes, params['batch_size'], params['num_classes']],
+  #                                 tf.uint8)
 
   predictions = {
       'classes': pred_classes,
-      'probabilities': tf.nn.softmax(logits, name='softmax_tensor'),
-      'decoded_labels': pred_decoded_labels
+      'probabilities': tf.nn.softmax(logits, name='softmax_tensor')#,
+      #'decoded_labels': pred_decoded_labels
   }
 
   if mode == tf.estimator.ModeKeys.PREDICT:
     # Delete 'decoded_labels' from predictions because custom functions produce error when used with saved_model
     predictions_without_decoded_labels = predictions.copy()
-    del predictions_without_decoded_labels['decoded_labels']
+    #del predictions_without_decoded_labels['decoded_labels']
 
     return tf.estimator.EstimatorSpec(
         mode=mode,
@@ -183,8 +183,8 @@ def deeplabv3_model_fn(features, labels, mode, params):
                 predictions_without_decoded_labels)
         })
 
-  gt_decoded_labels = tf.py_func(preprocessing.decode_labels,
-                                 [labels, params['batch_size'], params['num_classes']], tf.uint8)
+  #gt_decoded_labels = tf.py_func(preprocessing.decode_labels,
+  #                               [labels, params['batch_size'], params['num_classes']], tf.uint8)
 
   labels = tf.squeeze(labels, axis=3)  # reduce the channel dimension.
 
@@ -224,7 +224,7 @@ def deeplabv3_model_fn(features, labels, mode, params):
 
   if mode == tf.estimator.ModeKeys.TRAIN:
     tf.summary.image('images',
-                     tf.concat(axis=2, values=[images, gt_decoded_labels, pred_decoded_labels]),
+                     tf.concat(axis=2, values=[images]),#, gt_decoded_labels, pred_decoded_labels]),
                      max_outputs=params['tensorboard_images_max_outputs'])  # Concatenate row-wise.
 
     global_step = tf.train.get_or_create_global_step()
