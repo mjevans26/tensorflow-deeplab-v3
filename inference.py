@@ -90,7 +90,8 @@ def main(unused_argv):
     path_to_output = os.path.join(output_dir, output_filename)
 
     print("generating:", path_to_output)
-    mask = pred_dict['decoded_labels']
+    #mask = pred_dict['decoded_labels']
+    mask = pred_dict['classes']
     mask = Image.fromarray(mask)
     plt.axis('off')
     plt.imshow(mask)
