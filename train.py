@@ -90,8 +90,8 @@ parser.add_argument('--dims', type = int, default = 256,
                     help = 'Width of the input image in pixels')
 
 _NUM_CLASSES = 2
-_HEIGHT = 256
-_WIDTH = 256
+_HEIGHT = 513
+_WIDTH = 513
 _DEPTH = 3
 _MIN_SCALE = 0.5
 _MAX_SCALE = 2.0
@@ -131,12 +131,18 @@ def get_filenames(is_training, data_dir):
 def parse_record(raw_record):
   """Parse PASCAL image and label from a tf record."""
   keys_to_features = {
-      'B4':
+      'R':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'B3':
+      'G':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'B2':
+      'B':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      #'B4':
+      #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      #'B3':
+      #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      #'B2':
+      #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'pc1':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'pc2':
