@@ -232,18 +232,18 @@ def eval_input_fn(image_filenames, batch_size=1, side = 256, bands):
     #A tuple of images and labels.
   """
   # Reads an image from a file, decodes it into a dense tensor
-  def parse_record(raw_record):
+  def _parse_function(raw_record):
     """Parse PASCAL image and label from a tf record."""
     keys_to_features = {
       b: tf.FixedLenFeature([None, None], tf.float32) for k in bands
     }
                             
     keys_to_features = {
-        'B4':
+        'R':
         tf.FixedLenFeature([None, None], tf.float32),
-        'B3':
+        'G':
         tf.FixedLenFeature([None, None], tf.float32),
-        'B2':
+        'B':
         tf.FixedLenFeature([None, None], tf.float32),
         'pc1':
         tf.FixedLenFeature([None, None], tf.float32),
@@ -251,14 +251,19 @@ def eval_input_fn(image_filenames, batch_size=1, side = 256, bands):
         tf.FixedLenFeature([None, None], tf.float32),
         'pc3':
         tf.FixedLenFeature([None, None], tf.float32),
+        'landcover':
+        tf.FixedLenFeature([None, None]), tf.float32)
     }
 
     parsed = tf.parse_single_example(raw_record, keys_to_features)
-  
+    
+    label = parsed.pop('landcover')
+    label = tf.to_int32(tf.expand_dims(label, axis = -1))
+    
     image = tf.stack([parsed[x] for x in FLAGS.bands], axis = -1)
-  
     image = mean_image_subtraction(image)
-    return image
+    
+    return image, label
 
 #  def _parse_function(filename, is_label):
 #    if not is_label:
@@ -291,6 +296,7 @@ def eval_input_fn(image_filenames, batch_size=1, side = 256, bands):
   #dataset = tf.data.Dataset.from_tensor_slices(input_filenames)
   #if label_filenames is None:
   dataset = dataset.map(lambda x: _parse_function(x, False))
+  dataset = dataset.map(_parse_function)
   #else:
   #  dataset = dataset.map(lambda x, y: _parse_function((x, y), True))
   dataset = dataset.prefetch(batch_size)
@@ -298,9 +304,9 @@ def eval_input_fn(image_filenames, batch_size=1, side = 256, bands):
   iterator = dataset.make_one_shot_iterator()
 
   #if label_filenames is None:
-  images = iterator.get_next()
+  #images = iterator.get_next()
   #  labels = None
   #else:
-  #  images, labels = iterator.get_next()
+  images, labels = iterator.get_next()
 
-  return images#, labels
+  return images, labels
