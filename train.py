@@ -150,7 +150,7 @@ def parse_record(raw_record):
       'pc3':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'landcover':
-      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.int64)
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32)
   }
 
   parsed = tf.parse_single_example(raw_record, keys_to_features)
