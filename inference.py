@@ -92,7 +92,7 @@ def main(unused_argv):
     print("generating:", path_to_output)
     #mask = pred_dict['decoded_labels']
     classes = pred_dict['classes']
-    probs = pred_dict['probability']
+    probs = pred_dict['probabilities']
     print(probs)
     out = tf.stack([tf.squeeze(probs), tf.squeeze(classes)], axis = -1)
     #mask = Image.fromarray(mask)
