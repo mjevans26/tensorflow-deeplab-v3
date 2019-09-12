@@ -46,6 +46,9 @@ parser.add_argument('--output_stride', type=int, default=16,
 parser.add_argument('--debug', action='store_true',
                     help='Whether to use debugger to track down bad values during training.')
 
+parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
+                    help='Which set of 3 bands to use?')
+
 _NUM_CLASSES = 2
 
 
@@ -74,7 +77,7 @@ def main(unused_argv):
   #image_files = [os.path.join(FLAGS.data_dir, filename) for filename in examples]
   image_files = tf.gfile.Glob('{}/*tfrecord'.format(FLAGS.data_dir))
   predictions = model.predict(
-        input_fn=lambda: preprocessing.eval_input_fn(image_files, batch_size = 1, side = 513),
+        input_fn=lambda: preprocessing.eval_input_fn(image_files, FLAGS.bands, batch_size = 1, side = 513),
         hooks=pred_hooks)
 
   output_dir = FLAGS.output_dir
