@@ -8,6 +8,10 @@ _R_MEAN = 123.68
 _G_MEAN = 116.78
 _B_MEAN = 103.94
 
+S2_R_MEAN = 0
+S2_G_MEAN = 0
+S2_B_MEAN = 0
+
 # colour map
 label_colours = [(0, 0, 0),  # 0=background
                  # 1=aeroplane, 2=bicycle, 3=bird, 4=boat, 5=bottle
