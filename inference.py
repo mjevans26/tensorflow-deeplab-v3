@@ -79,7 +79,7 @@ def main(unused_argv):
   predictions = model.predict(
         input_fn=lambda: preprocessing.eval_input_fn(image_files, FLAGS.bands, batch_size = 1, side = 513),
         hooks=pred_hooks)
-  print(zip(predictions, image_files))
+  
   output_dir = FLAGS.output_dir
   if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -92,6 +92,7 @@ def main(unused_argv):
     print("generating:", path_to_output)
     #mask = pred_dict['decoded_labels']
     mask = pred_dict['classes']
+    print(mask)
     mask = Image.fromarray(mask)
     plt.axis('off')
     plt.imshow(mask)
