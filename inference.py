@@ -74,7 +74,7 @@ def main(unused_argv):
   #image_files = [os.path.join(FLAGS.data_dir, filename) for filename in examples]
   image_files = tf.gfile.Glob('{}/*tfrecord'.format(FLAGS.data_dir))
   predictions = model.predict(
-        input_fn=lambda: preprocessing.eval_input_fn(image_files, batch = 1, side = 513),
+        input_fn=lambda: preprocessing.eval_input_fn(image_files, batch_size = 1, side = 513),
         hooks=pred_hooks)
 
   output_dir = FLAGS.output_dir
