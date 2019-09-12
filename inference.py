@@ -9,6 +9,7 @@ import os
 import sys
 
 import tensorflow as tf
+import numpy as np
 
 import deeplab_model
 from utils import preprocessing
@@ -94,7 +95,7 @@ def main(unused_argv):
     classes = pred_dict['classes']
     probs = pred_dict['probabilities']
     print(probs)
-    out = tf.stack([tf.squeeze(probs), tf.squeeze(classes)], axis = -1)
+    out = np.stack([np.squeeze(probs), np.squeeze(classes)], axis = -1)
     #mask = Image.fromarray(mask)
     plt.axis('off')
     plt.imshow(probs, cmap='hot', interpolation='nearest', vmin = 0.9, vmax = 1)
