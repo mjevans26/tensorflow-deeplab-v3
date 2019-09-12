@@ -83,9 +83,15 @@ parser.add_argument('--debug', action='store_true',
 parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
                     help='Which set of 3 bands to use?')
 
+parser.add_argument('--classes', type = int, default = 2,
+                    help = 'How many classes are present in training data?')
+
+parser.add_argument('--dims', type = int, default = 256,
+                    help = 'Width of the input image in pixels')
+
 _NUM_CLASSES = 2
-_HEIGHT = 513
-_WIDTH = 513
+_HEIGHT = 256
+_WIDTH = 256
 _DEPTH = 3
 _MIN_SCALE = 0.5
 _MAX_SCALE = 2.0
@@ -97,8 +103,8 @@ _MOMENTUM = 0.9
 _BATCH_NORM_DECAY = 0.9997
 
 _NUM_IMAGES = {
-    'train': 198,
-    'validation': 198,
+    'train': 711,
+    'validation': 79
 }
 
 
@@ -115,21 +121,21 @@ def get_filenames(is_training, data_dir):
   files = tf.gfile.Glob('{}/*tfrecord.gz'.format(data_dir))
   split = len(files)//20
   if is_training:
-    return files[0:split*4]
+    return files[0:split*19]
     #return [os.path.join(data_dir, 'voc_train.record')]
   else:
-    return files[split*4:]
-    return [os.path.join(data_dir, 'voc_val.record')]
+    return files[split*19:]
+    #return [os.path.join(data_dir, 'voc_val.record')]
 
 
 def parse_record(raw_record):
   """Parse PASCAL image and label from a tf record."""
   keys_to_features = {
-      'R':
+      'B4':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'G':
+      'B3':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'B':
+      'B2':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'pc1':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
@@ -138,7 +144,7 @@ def parse_record(raw_record):
       'pc3':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'landcover':
-      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32)
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.int64)
   }
 
   parsed = tf.parse_single_example(raw_record, keys_to_features)
@@ -179,8 +185,11 @@ def preprocess_image(image, label, is_training):
 
     image.set_shape([_HEIGHT, _WIDTH, 3])
     label.set_shape([_HEIGHT, _WIDTH, 1])
-
-  image = preprocessing.mean_image_subtraction(image)
+    
+  if 'B2' in FLAGS.bands:
+      image = preprocessing.mean_image_subtraction(image, S2 = True)
+  elif 'R' in FLAGS.bands:
+      image = preprocessing.mean_image_subtraction(image, S2 = False)
 
   return image, label
 
@@ -200,14 +209,18 @@ def input_fn(is_training, data_dir, batch_size, num_epochs=1):
   #dataset = tf.data.Dataset.from_tensor_slices(get_filenames(is_training, data_dir))
   #dataset = dataset.flat_map(tf.data.TFRecordDataset)
   dataset = tf.data.TFRecordDataset(get_filenames(is_training, data_dir), compression_type = 'GZIP')
+  def filter_fn(x, y):
+      return tf.size(tf.where(tf.equal(y, 1))) >= 1
+
+  dataset = dataset.map(parse_record)
 
   if is_training:
     # When choosing shuffle buffer sizes, larger sizes result in better
     # randomness, while smaller sizes have better performance.
     # is a relatively small dataset, we choose to shuffle the full epoch.
+    dataset = dataset.filter(filter_fn)
     dataset = dataset.shuffle(buffer_size=_NUM_IMAGES['train'])
 
-  dataset = dataset.map(parse_record)
   dataset = dataset.map(
       lambda image, label: preprocess_image(image, label, is_training))
   dataset = dataset.prefetch(batch_size)
