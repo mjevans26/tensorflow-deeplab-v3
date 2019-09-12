@@ -87,6 +87,7 @@ def main(unused_argv):
 
   for pred_dict, image_path in zip(predictions, image_files):
     image_basename = os.path.splitext(os.path.basename(image_path))[0]
+    output_filename = image_basename + '_pred.npy'
     output_filename = image_basename + '_mask.png'
     path_to_output = os.path.join(output_dir, output_filename)
 
@@ -96,12 +97,13 @@ def main(unused_argv):
     probs = pred_dict['probabilities']
     print(probs.shape, classes.shape)
     out = np.concatenate([probs, classes], axis = -1)
+    np.save(path_to_output, out)
     #mask = Image.fromarray(mask)
     plt.axis('off')
     plt.imshow(probs[:, :, 0], cmap='hot', interpolation='nearest', vmin = 0.9, vmax = 1)
     plt.show()
     #plt.imshow(mask)
-    plt.savefig(path_to_output, bbox_inches='tight')
+    #plt.savefig(path_to_output, bbox_inches='tight')
 
 
 if __name__ == '__main__':
