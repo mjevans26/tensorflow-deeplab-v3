@@ -46,7 +46,7 @@ parser.add_argument('--output_stride', type=int, default=16,
 parser.add_argument('--debug', action='store_true',
                     help='Whether to use debugger to track down bad values during training.')
 
-_NUM_CLASSES = 21
+_NUM_CLASSES = 2
 
 
 def main(unused_argv):
@@ -70,9 +70,9 @@ def main(unused_argv):
           'num_classes': _NUM_CLASSES,
       })
 
-  examples = dataset_util.read_examples_list(FLAGS.infer_data_list)
-  image_files = [os.path.join(FLAGS.data_dir, filename) for filename in examples]
-
+  #examples = dataset_util.read_examples_list(FLAGS.infer_data_list)
+  #image_files = [os.path.join(FLAGS.data_dir, filename) for filename in examples]
+  image_files = tf.gfile.Glob('{}/*tfrecord'.format(FLAGS.data_dir))
   predictions = model.predict(
         input_fn=lambda: preprocessing.eval_input_fn(image_files),
         hooks=pred_hooks)
