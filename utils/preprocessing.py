@@ -234,25 +234,25 @@ def eval_input_fn(image_filenames, batch_size=1, side = 256, bands):
   # Reads an image from a file, decodes it into a dense tensor
   def _parse_function(raw_record):
     """Parse PASCAL image and label from a tf record."""
-    keys_to_features = {
-      b: tf.FixedLenFeature([None, None], tf.float32) for k in bands
-    }
+    #keys_to_features = {
+    #  b: tf.FixedLenFeature([None, None], tf.float32) for k in bands
+    #}
                             
     keys_to_features = {
         'R':
-        tf.FixedLenFeature([None, None], tf.float32),
+        tf.FixedLenFeature([side, side], tf.float32),
         'G':
-        tf.FixedLenFeature([None, None], tf.float32),
+        tf.FixedLenFeature([side, side], tf.float32),
         'B':
-        tf.FixedLenFeature([None, None], tf.float32),
+        tf.FixedLenFeature([side, side], tf.float32),
         'pc1':
-        tf.FixedLenFeature([None, None], tf.float32),
+        tf.FixedLenFeature([side, side], tf.float32),
         'pc2':
-        tf.FixedLenFeature([None, None], tf.float32),
+        tf.FixedLenFeature([side, side], tf.float32),
         'pc3':
-        tf.FixedLenFeature([None, None], tf.float32),
+        tf.FixedLenFeature([side, side], tf.float32),
         'landcover':
-        tf.FixedLenFeature([None, None]), tf.float32)
+        tf.FixedLenFeature([side, side], tf.float32)
     }
 
     parsed = tf.parse_single_example(raw_record, keys_to_features)
