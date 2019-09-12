@@ -52,6 +52,21 @@ parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
 
 _NUM_CLASSES = 2
 
+def make_example(pred_dict):
+  class_id = np.squeeze(pred_dict['class_id']).flatten()
+  probability = np.squeeze(pred_dict['probability']).flatten()
+  return tf.train.Example(
+    features=tf.train.Features(
+      feature={
+        'class_id': tf.train.Feature(
+            float_list=tf.train.FloatList(
+                value=class_id)),
+        'probability': tf.train.Feature(
+            float_list=tf.train.FloatList(
+                value=probability))
+      }
+    )
+  )
 
 def main(unused_argv):
   # Using the Winograd non-fused algorithms provides a small performance boost.
@@ -82,6 +97,7 @@ def main(unused_argv):
         hooks=pred_hooks,
         yield_single_examples = False)
   
+  output_dir = FLAGS.output_dir
   MAX_RECORDS_PER_FILE = 50
   output_path = output_dir + '/parking_segmentation-{:05}.tfrecord'
 
@@ -116,7 +132,7 @@ def main(unused_argv):
   
   print('Wrote: {} patches.'.format(total_patches))
   
-  output_dir = FLAGS.output_dir
+  
   if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
