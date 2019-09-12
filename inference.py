@@ -95,7 +95,7 @@ def main(unused_argv):
     classes = pred_dict['classes']
     probs = pred_dict['probabilities']
     print(probs.shape, classes.shape)
-    out = np.concatenate([np.squeeze(probs), np.squeeze(classes)], axis = -1)
+    out = np.concatenate([probs, classes], axis = -1)
     #mask = Image.fromarray(mask)
     plt.axis('off')
     plt.imshow(probs, cmap='hot', interpolation='nearest', vmin = 0.9, vmax = 1)
