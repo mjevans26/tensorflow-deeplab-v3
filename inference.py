@@ -79,7 +79,42 @@ def main(unused_argv):
   image_files = tf.gfile.Glob('{}/*tfrecord.gz'.format(FLAGS.data_dir))
   predictions = model.predict(
         input_fn=lambda: preprocessing.eval_input_fn(image_files, FLAGS.bands, batch_size = 1, side = 513),
-        hooks=pred_hooks)
+        hooks=pred_hooks,
+        yield_single_examples = False)
+  
+  MAX_RECORDS_PER_FILE = 50
+  output_path = output_dir + '/parking_segmentation-{:05}.tfrecord'
+
+  # Create the records we'll ingest into EE
+  file_number = 0
+  still_writing = True
+  total_patches = 0
+  while still_writing:
+    file_path = output_path.format(file_number)
+    writer = tf.python_io.TFRecordWriter(file_path)
+    print("Writing file: {}".format(file_path))
+    try:
+      written_records = 0
+      while True:
+        pred_dict = next(predictions)
+      
+        writer.write(make_example(pred_dict).SerializeToString())
+      
+        written_records += 1 
+        total_patches += 1
+      
+        if written_records % 5 == 0:
+          print("  Writing patch: {}".format(written_records))
+      
+        if written_records == MAX_RECORDS_PER_FILE:
+          break
+    except: 
+      still_writing=False
+    finally:
+      file_number += 1
+      writer.close()
+  
+  print('Wrote: {} patches.'.format(total_patches))
   
   output_dir = FLAGS.output_dir
   if not os.path.exists(output_dir):
