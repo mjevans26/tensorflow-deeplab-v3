@@ -53,8 +53,8 @@ parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
 _NUM_CLASSES = 2
 
 def make_example(pred_dict):
-  class_id = np.squeeze(pred_dict['class_id']).flatten()
-  probability = np.squeeze(pred_dict['probability']).flatten()
+  class_id = np.squeeze(pred_dict['classes']).flatten()
+  probability = np.squeeze(pred_dict['probabilities']).flatten()
   return tf.train.Example(
     features=tf.train.Features(
       feature={
