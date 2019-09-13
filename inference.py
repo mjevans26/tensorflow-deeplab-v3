@@ -54,7 +54,7 @@ _NUM_CLASSES = 2
 
 def make_example(pred_dict):
   class_id = np.squeeze(pred_dict['classes']).flatten()
-  probability = np.squeeze(pred_dict['probabilities']).flatten()
+  probability = np.squeeze(pred_dict['probabilities'][:,:,1]).flatten()
   return tf.train.Example(
     features=tf.train.Features(
       feature={
