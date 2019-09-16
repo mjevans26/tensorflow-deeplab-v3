@@ -103,8 +103,8 @@ _MOMENTUM = 0.9
 _BATCH_NORM_DECAY = 0.9997
 
 _NUM_IMAGES = {
-    'train': 711,
-    'validation': 79
+    'train': 175,
+    'validation': 20
 }
 
 
