@@ -80,7 +80,7 @@ parser.add_argument('--weight_decay', type=float, default=2e-4,
 parser.add_argument('--debug', action='store_true',
                     help='Whether to use debugger to track down bad values during training.')
 
-parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
+parser.add_argument('--bands', nargs = 3, default = ['B4','B3','B2'],
                     help='Which set of 3 bands to use?')
 
 parser.add_argument('--classes', type = int, default = 2,
@@ -151,7 +151,7 @@ def parse_record(raw_record):
       'pc3':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'landcover':
-      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32)
+      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.int64)
   }
 
   parsed = tf.parse_single_example(raw_record, keys_to_features)
