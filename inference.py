@@ -50,6 +50,8 @@ parser.add_argument('--debug', action='store_true',
 parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
                     help='Which set of 3 bands to use?')
 
+parser.add_argument('--in_dims', nargs = 1, default = 256, help = 'side of input images for predictions')
+
 _NUM_CLASSES = 2
 
 def make_example(pred_dict):
@@ -93,13 +95,13 @@ def main(unused_argv):
   #image_files = [os.path.join(FLAGS.data_dir, filename) for filename in examples]
   image_files = tf.gfile.Glob('{}/*tfrecord.gz'.format(FLAGS.data_dir))
   predictions = model.predict(
-        input_fn=lambda: preprocessing.eval_input_fn(image_files, FLAGS.bands, batch_size = 1, side = 513),
+        input_fn=lambda: preprocessing.eval_input_fn(image_files, FLAGS.bands, batch_size = 1, side = FLAGS.in_dims),
         hooks=pred_hooks,
         yield_single_examples = False)
   
   output_dir = FLAGS.output_dir
   MAX_RECORDS_PER_FILE = 50
-  output_path = output_dir + '/parking_segmentation-{:05}.tfrecord'
+  output_path = output_dir + '-{:05}.tfrecord'
 
   # Create the records we'll ingest into EE
   file_number = 0
