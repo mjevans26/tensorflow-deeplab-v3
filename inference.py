@@ -100,6 +100,7 @@ def main(unused_argv):
         hooks=pred_hooks,
         yield_single_examples = False)
   
+  print(next(predictions))
   output_dir = FLAGS.output_dir
   MAX_RECORDS_PER_FILE = 50
   output_path = output_dir + '-{:05}.tfrecord'
@@ -116,7 +117,7 @@ def main(unused_argv):
       written_records = 0
       while True:
         pred_dict = next(predictions)
-        print(pred_dict)
+        
         writer.write(make_example(pred_dict).SerializeToString())
       
         written_records += 1 
