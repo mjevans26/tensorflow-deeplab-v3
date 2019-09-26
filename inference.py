@@ -96,7 +96,7 @@ def main(unused_argv):
   image_files = tf.gfile.Glob('{}/*tfrecord.gz'.format(FLAGS.data_dir))
   print(image_files)
   predictions = model.predict(
-        input_fn=lambda: preprocessing.eval_input_fn(image_files, bands = ['R', 'G', 'B'], batch_size = 1, side = FLAGS.in_dims),
+        input_fn=lambda: preprocessing.eval_input_fn(image_files, bands = FLAGS.bands, batch_size = 1, side = FLAGS.in_dims),
         hooks=pred_hooks,
         yield_single_examples = False)
   
