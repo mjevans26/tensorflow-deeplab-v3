@@ -251,7 +251,7 @@ def eval_input_fn(image_filenames, bands, batch_size=1, side = 256):
         tf.FixedLenFeature([side, side], tf.float32),
         'pc3':
         tf.FixedLenFeature([side, side], tf.float32),
-        'landcover':
+        'label':
         tf.FixedLenFeature([side, side], tf.float32)
     }
 
