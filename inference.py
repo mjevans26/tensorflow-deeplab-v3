@@ -116,7 +116,7 @@ def main(unused_argv):
       written_records = 0
       while True:
         pred_dict = next(predictions)
-      
+        print(pred_dict)
         writer.write(make_example(pred_dict).SerializeToString())
       
         written_records += 1 
