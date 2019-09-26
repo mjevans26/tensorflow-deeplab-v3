@@ -50,7 +50,7 @@ parser.add_argument('--debug', action='store_true',
 parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
                     help='Which set of 3 bands to use?')
 
-parser.add_argument('--in_dims', nargs = 1, default = 256, help = 'side of input images for predictions')
+parser.add_argument('--in_dims', type = int, default = 256, help = 'side of input images for predictions')
 
 _NUM_CLASSES = 2
 
