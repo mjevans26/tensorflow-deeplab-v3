@@ -217,7 +217,7 @@ def random_flip_left_right_image_and_label(image, label):
   return image, label
 
 
-def eval_input_fn(image_filenames, bands, batch_size=1, side = 256):
+def eval_input_fn(image_filenames, bands, batch_size=1, side = 513):
   """An input function for evaluation and inference.
 
   Args:
