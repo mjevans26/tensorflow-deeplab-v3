@@ -50,13 +50,18 @@ parser.add_argument('--debug', action='store_true',
 parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
                     help='Which set of 3 bands to use?')
 
-parser.add_argument('--in_dims', type = int, default = 256, help = 'side of input images for predictions')
+parser.add_argument('--patch_dims', type = int, default = 256, help = 'size of output predicted patch')
+
+parser.add_argument('--buffer_size', type = int, default = 128, help = 'size of patch buffer for predictions')
 
 _NUM_CLASSES = 2
 
 def make_example(pred_dict):
-  class_id = np.squeeze(pred_dict['classes']).flatten()
-  probability = np.squeeze(pred_dict['probabilities'][:,:,:,1]).flatten()
+  buffer_shape = [FLAGS.buffer_size, FLAGS.buffer_size]
+  x_buffer = int(buffer_shape[0] / 2)
+  y_buffer = int(buffer_shape[1] / 2)
+  class_id = np.squeeze(pred_dict['classes'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch.dims, :).flatten()
+  probability = np.squeeze(pred_dict['probabilities'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch_dims, 1]).flatten()
   return tf.train.Example(
     features=tf.train.Features(
       feature={
@@ -96,7 +101,7 @@ def main(unused_argv):
   image_files = tf.gfile.Glob('{}/*tfrecord.gz'.format(FLAGS.data_dir))
   print(image_files)
   predictions = model.predict(
-        input_fn=lambda: preprocessing.eval_input_fn(image_files, bands = FLAGS.bands, batch_size = 1, side = FLAGS.in_dims),
+        input_fn=lambda: preprocessing.eval_input_fn(image_files, bands = FLAGS.bands, batch_size = 1, side = FLAGS.patch_dims+FLAGS.buffer_size),
         hooks=pred_hooks,
         yield_single_examples = False)
   
