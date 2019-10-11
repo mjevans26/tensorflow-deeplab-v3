@@ -105,7 +105,8 @@ def main(unused_argv):
         hooks=pred_hooks,
         yield_single_examples = False)
   
-  print(next(predictions))
+  pred = next(predictions)
+  print(pred['classes'].shape(), pred['probabilities'].shape())
   output_dir = FLAGS.output_dir
   MAX_RECORDS_PER_FILE = 50
   output_path = output_dir + '-{:05}.tfrecord'
