@@ -60,7 +60,7 @@ def make_example(pred_dict):
   buffer_shape = [FLAGS.buffer_size, FLAGS.buffer_size]
   x_buffer = int(buffer_shape[0] / 2)
   y_buffer = int(buffer_shape[1] / 2)
-  class_id = np.squeeze(pred_dict['classes'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch.dims, :).flatten()
+  class_id = np.squeeze(pred_dict['classes'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch.dims, :]).flatten()
   probability = np.squeeze(pred_dict['probabilities'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch_dims, 1]).flatten()
   return tf.train.Example(
     features=tf.train.Features(
