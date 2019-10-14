@@ -57,11 +57,13 @@ parser.add_argument('--buffer_size', type = int, default = 128, help = 'size of 
 _NUM_CLASSES = 2
 
 def make_example(pred_dict):
-  buffer_shape = [FLAGS.buffer_size, FLAGS.buffer_size]
-  x_buffer = int(buffer_shape[0] / 2)
-  y_buffer = int(buffer_shape[1] / 2)
-  class_id = np.squeeze(pred_dict['classes'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch.dims, :]).flatten()
-  probability = np.squeeze(pred_dict['probabilities'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch_dims, 1]).flatten()
+  #buffer_shape = [FLAGS.buffer_size, FLAGS.buffer_size]
+  #x_buffer = int(buffer_shape[0] / 2)
+  #y_buffer = int(buffer_shape[1] / 2)
+  class_id = np.squeeze(pred_dict['classes'][:, 128:128+513, 128:128+513, :]).flatten()
+  probability = np.squeeze(pred_dict['probabilities'][:, 128:128+513, 128:128+513, 1]).flatten()
+  #class_id = np.squeeze(pred_dict['classes'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch.dims, :]).flatten()
+  #probability = np.squeeze(pred_dict['probabilities'][:, x_buffer:x_buffer+FLAGS.patch_dims, y_buffer:y_buffer+FLAGS.patch_dims, 1]).flatten()
   return tf.train.Example(
     features=tf.train.Features(
       feature={
