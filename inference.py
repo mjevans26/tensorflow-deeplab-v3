@@ -106,10 +106,7 @@ def main(unused_argv):
         input_fn=lambda: preprocessing.eval_input_fn(image_files, bands = FLAGS.bands, batch_size = 1, side = FLAGS.patch_dims+FLAGS.buffer_size),
         hooks=pred_hooks,
         yield_single_examples = False)
-  
-  pred = next(predictions)
-  print(make_example(pred))
-  #print(pred['classes'].shape, pred['probabilities'].shape)
+
   output_dir = FLAGS.output_dir
   MAX_RECORDS_PER_FILE = 50
   output_path = output_dir + '-{:05}.tfrecord'
