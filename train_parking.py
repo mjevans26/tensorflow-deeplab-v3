@@ -119,9 +119,9 @@ def get_filenames(is_training, data_dir):
     A list of file names.
   """
   if is_training:
-    files = tf.io.gfile.Glob('{}/training/*tfrecord.gz'.format(data_dir))
+    files = tf.io.gfile.glob('{}/training/*tfrecord.gz'.format(data_dir))
   else:
-    files = tf.io.gfile.Glob('{}/eval/*tfrecord.gz'.format(data_dir))
+    files = tf.io.gfile.glob('{}/eval/*tfrecord.gz'.format(data_dir))
   return files 
 #  files = tf.gfile.Glob('{}/*tfrecord.gz'.format(data_dir))
 #  split = len(files)//20
