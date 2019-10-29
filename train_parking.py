@@ -118,13 +118,18 @@ def get_filenames(is_training, data_dir):
   Returns:
     A list of file names.
   """
-  files = tf.gfile.Glob('{}/*tfrecord.gz'.format(data_dir))
-  split = len(files)//20
   if is_training:
-    return files[0:split*19]
-    #return [os.path.join(data_dir, 'voc_train.record')]
+    files = tf.gfile.Glob('{}/training/*tfrecord.gz'.format(data_dir))
   else:
-    return files[split*19:]
+    files = tf.gfile.Glob('{}/eval/*tfrecord.gz'.format(data_dir))
+    
+#  files = tf.gfile.Glob('{}/*tfrecord.gz'.format(data_dir))
+#  split = len(files)//20
+#  if is_training:
+#    return files[0:split*19]
+    #return [os.path.join(data_dir, 'voc_train.record')]
+#  else:
+#    return files[split*19:]
     #return [os.path.join(data_dir, 'voc_val.record')]
 
 
