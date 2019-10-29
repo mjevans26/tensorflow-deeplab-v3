@@ -86,12 +86,12 @@ parser.add_argument('--bands', nargs = 3, default = ['R','G','B'],
 parser.add_argument('--classes', type = int, default = 2,
                     help = 'How many classes are present in training data?')
 
-parser.add_argument('--dims', type = int, default = 256,
+parser.add_argument('--dims', type = int, default = 512,
                     help = 'Width of the input image in pixels')
 
 _NUM_CLASSES = 2
-_HEIGHT = 513
-_WIDTH = 513
+_HEIGHT = 512
+_WIDTH = 512
 _DEPTH = 3
 _MIN_SCALE = 0.5
 _MAX_SCALE = 2.0
@@ -148,12 +148,12 @@ def parse_record(raw_record):
       #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       #'B2':
       #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'pc1':
-      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'pc2':
-      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
-      'pc3':
-      tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      #'pc1':
+      #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      #'pc2':
+      #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
+      #'pc3':
+      #tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32),
       'landcover':
       tf.FixedLenFeature([_HEIGHT, _WIDTH], tf.float32)
   }
