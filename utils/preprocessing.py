@@ -217,7 +217,7 @@ def random_flip_left_right_image_and_label(image, label):
   return image, label
 
 
-def eval_input_fn(image_filenames, bands, batch_size=1, side = 513):
+def eval_input_fn(image_filenames, bands, batch_size=1, side = 512):
   """An input function for evaluation and inference.
 
   Args:
@@ -245,12 +245,12 @@ def eval_input_fn(image_filenames, bands, batch_size=1, side = 513):
         tf.FixedLenFeature([side, side], tf.float32),
         'B':
         tf.FixedLenFeature([side, side], tf.float32),
-        'pc1':
-        tf.FixedLenFeature([side, side], tf.float32),
-        'pc2':
-        tf.FixedLenFeature([side, side], tf.float32),
-        'pc3':
-        tf.FixedLenFeature([side, side], tf.float32),
+        #'pc1':
+        #tf.FixedLenFeature([side, side], tf.float32),
+        #'pc2':
+        #tf.FixedLenFeature([side, side], tf.float32),
+        #'pc3':
+        #tf.FixedLenFeature([side, side], tf.float32),
         'landcover':
         tf.FixedLenFeature([side, side], tf.float32)
     }
